@@ -15,6 +15,10 @@ echo "---------------------Getting IP of Local Machine-"
 NETWORK="enp2s0"
 IP="$(ifconfig $NETWORK | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')"
 
+if [ "$1" != "" ]; then
+	IP=$1
+fi
+
 #######################################################################################################
 #defining the ports of applications
 #######################################################################################################
@@ -24,10 +28,34 @@ echo "---------------------Defining Ports--------------"
 UNIVERSAL_USER_PORT="5000"
 COMMUNITY_PORT="5001"
 MAPPING_PORT="5002"
+BC_EDGV_PORT="5003"
 #MAKERS_PORT="5003"
 #MANAGER_SPACE_PORT="5004"
 #ACTIVITY_STREAM_PORT="5005"
 #DASHBOARD_PORT="5006"
+
+#######################################################################################################
+#starting the bd_edgv
+#######################################################################################################
+
+
+
+echo "---------------------Start db_edgv---------------"
+BD_EDGV_ID="$( docker run -d --name db_edgv -v ~/idehco3/data:/var/lib/postgresql/data db_edgv )"
+
+if [ "$BD_EDGV_ID" != "" ]; then
+	BD_EDGV_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $BD_EDGV_ID )"
+fi
+
+
+#######################################################################################################
+#starting the edgv
+#######################################################################################################
+
+
+echo "---------------------Starting edgv--------------"
+BC_EDGV_ID="$( docker run -d --dns 146.164.34.2 -e IP_SGBD=$BD_EDGV_IP -p $BC_EDGV_PORT:8000 --name bc_edgv -v ~/idehco3/bc_edgv:/code bc_edgv ./run3.sh )"
+
 
 #######################################################################################################
 #starting the containers
@@ -49,6 +77,10 @@ MAPPING_ID="$( docker run -d --dns 146.164.34.2 -e IP_SGBD=$IP -p $MAPPING_PORT:
 
 
 echo "---------------------Getting IP of Modules-------"
+
+if [ "$BC_EDGV_ID" != "" ]; then
+	BC_EDGV_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $BC_EDGV_ID )"
+fi
 
 if [ "$UNIVERSAL_USER_ID" != "" ]; then
 	UNIVERSAL_USER_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $UNIVERSAL_USER_ID )"
@@ -84,6 +116,11 @@ fi
 #######################################################################################################
 
 echo "---------------------Modules---------------------"
+
+if [ "$BC_EDGV_IP" != "" ]; then
+	echo "BC EDGV running in: $BC_EDGV_IP:8000; $IP:$BC_EDGV_PORT"
+fi
+
 if [ "$UNIVERSAL_USER_ID" != "" ]; then
 	echo "Universal User running in: $UNIVERSAL_USER_IP:8000; $IP:$UNIVERSAL_USER_PORT"
 fi
