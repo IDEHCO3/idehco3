@@ -4,10 +4,7 @@
 #getting the home directory
 #######################################################################################################
 
-HOME_DIR=~/idehco3
-if [ "$1" != "" ]; then
-	HOME_DIR=$1
-fi
+HOME_DIR=$(pwd)
 
 #######################################################################################################
 #starting database
@@ -36,7 +33,7 @@ declare -A APPS=( ["universal_user"]="5000"
 for app in "${!APPS[@]}"
 do
 	echo " ** starting app $app..."
-	id="$( docker run -d --dns 146.164.34.2 -e IP_SGBD=$DB_IP -p ${APPS["$app"]}:8000 --name $app -v $HOME_DIR/$app:/code idehco3_base ./run.sh )"
+	id="$( docker run -d --dns 146.164.34.2 -e IP_SGBD=$DB_IP -p ${APPS["$app"]}:8000 --name $app -v $HOME_DIR/apps/$app:/code idehco3_base ./run.sh )"
 
 	if [ "$id" != "" ]; then
 		ip="$( docker inspect --format '{{ .NetworkSettings.IPAddress }}' $id )"
