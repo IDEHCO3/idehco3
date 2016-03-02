@@ -1,2 +1,8 @@
 #temp files
 *~
+
+#database files
+data/*
+
+#app source
+apps/*
