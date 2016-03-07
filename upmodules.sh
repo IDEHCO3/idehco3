@@ -28,7 +28,8 @@ echo "DATABASE: $DB_IMAGE is running in $DB_IP:5432"
 
 declare -A APPS=( ["universal_user"]="5000" 
 				  ["community"]="5001"
-				  ["mapping"]="5002" )
+				  ["mapping"]="5002"
+				  ["bc_edgv"]="5003" )
 
 for app in "${!APPS[@]}"
 do
