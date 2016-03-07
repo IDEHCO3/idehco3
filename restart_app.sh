@@ -1,18 +1,23 @@
 #!/bin/bash
 
-if [ "$1" != "" ]; then
-	app=$1
-else
-	echo "You need pass the app name as argument."
-	exit
-fi
-
 HOME_DIR=$(pwd)
 
 declare -A APPS=( ["universal_user"]="5000" 
 				  ["community"]="5001"
 				  ["mapping"]="5002"
 				  ["bc_edgv"]="5003" )
+
+if [ "$1" != "" ]; then
+	app=$1
+else
+	echo "You need pass the app name as argument."
+	echo "like some of them:"
+	for app in "${!APPS[@]}"
+	do
+		echo "	$app"
+	done
+	exit
+fi
 
 echo " -- stopping app $app"
 docker stop $app
