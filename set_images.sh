@@ -2,6 +2,9 @@
 
 apps_folder="apps"
 data_folder="data"
+database="database"
+
+dockerfile_folder="dockerfile_database"
 
 git_hub_url="https://github.com/idehco3"
 
@@ -21,6 +24,10 @@ if [ ! -d $data_folder ]; then
 	mkdir $data_folder
 fi
 
+echo "++ creating the data base image"
+cd $dockerfile_folder
+docker build -t $database .
+cd ..
 
 echo "* getting in a folder $apps_folder"
 cd $apps_folder

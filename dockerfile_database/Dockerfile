@@ -1,0 +1,5 @@
+FROM postgres:9.4
+ENV POSTGRES_USER=idehco3
+ENV POSTGRES_PASSWORD=idehco3
+ENV POSTGRES_DB=idehco3
+
