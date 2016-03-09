@@ -12,6 +12,13 @@ HOME_DIR=$(pwd)
 
 DB_IMAGE="database"
 
+echo " ** checking if exist the container of app $DB_IMAGE"
+id="$( docker ps -a -q -f name=$DB_IMAGE )"
+if [ "$id" != "" ]; then
+	docker stop $DB_IMAGE
+	docker rm $DB_IMAGE
+fi
+
 DB_ID="$( docker run -d --name $DB_IMAGE -v $HOME_DIR/data:/var/lib/postgresql/data $DB_IMAGE )"
 
 if [ "$DB_ID" != "" ]; then
@@ -33,6 +40,13 @@ declare -A APPS=( ["universal_user"]="5000"
 
 for app in "${!APPS[@]}"
 do
+	echo " ** checking if exist the container of app $app"
+	id="$( docker ps -a -q -f name=$app )"
+	if [ "$id" != "" ]; then
+		docker stop $app
+		docker rm $app
+	fi
+
 	echo " ** starting app $app..."
 	id="$( docker run -d --dns 146.164.34.2 -e IP_SGBD=$DB_IP -p ${APPS["$app"]}:8000 --name $app -v $HOME_DIR/apps/$app:/code idehco3_base ./run.sh )"
 

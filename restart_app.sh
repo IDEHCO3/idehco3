@@ -19,9 +19,13 @@ else
 	exit
 fi
 
-echo " -- stopping app $app"
-docker stop $app
-docker rm $app
+echo " ** checking if exist the container of app $app"
+id="$( docker ps -a -q -f name=$app )"
+if [ "$id" != "" ]; then
+	echo " -- stopping app $app"
+	docker stop $app
+	docker rm $app
+fi
 
 echo " ** getting the ip of database"
 DB_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' database )"
