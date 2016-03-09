@@ -10,7 +10,8 @@ git_hub_url="https://github.com/idehco3"
 
 apps="universal_user
 	  community
-	  mapping"
+	  mapping
+	  markers"
 
 
 

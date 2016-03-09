@@ -4,6 +4,7 @@ APPS="universal_user
 	  community
 	  mapping
 	  bc_edgv
+	  markers
 	  database"
 
 for app in $APPS

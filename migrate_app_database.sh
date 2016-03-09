@@ -32,11 +32,14 @@ echo " ** getting the ip of database"
 DB_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' database )"
 
 echo " ** starting app $app..."
-id="$( docker run -d --dns 146.164.34.2 -e IP_SGBD=$DB_IP -p ${APPS["$app"]}:8000 --name $app -v $HOME_DIR/apps/$app:/code idehco3_base ./run.sh )"
+id="$( docker run -d --dns 146.164.34.2 -e IP_SGBD=$DB_IP --name $app -v $HOME_DIR/apps/$app:/code idehco3_base ./run.sh migrate )"
 
 if [ "$id" != "" ]; then
-	ip="$( docker inspect --format '{{ .NetworkSettings.IPAddress }}' $id )"
-	echo " ++ app $app running in $ip:8000 and localhost:${APPS["$app"]}"
+	echo " ++ the app $app was migrated."
 else
-	echo " -- fail to starting app $app"
+	echo " -- fail to migrate the app $app"
 fi
+
+
+docker stop $app
+docker rm $app
