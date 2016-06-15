@@ -19,7 +19,7 @@ if [ "$id" != "" ]; then
 	docker rm $DB_IMAGE
 fi
 
-DB_ID="$( docker run -d --name $DB_IMAGE -v $HOME_DIR/data:/var/lib/postgresql/data $DB_IMAGE )"
+DB_ID="$( docker run -d -p 2345:5432 --name $DB_IMAGE -v $HOME_DIR/data:/var/lib/postgresql/data $DB_IMAGE )"
 
 if [ "$DB_ID" != "" ]; then
 	DB_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $DB_ID )"
