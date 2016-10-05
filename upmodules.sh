@@ -49,11 +49,11 @@ do
 	fi
 
 	echo " ** starting app $app..."
-	id="$( docker run -d --dns 146.164.34.2 -e IP_SGBD=$DB_IP -p ${APPS["$app"]}:8000 --name $app -v $HOME_DIR/apps/$app:/code idehco3_base ./run.sh )"
+	id="$( docker run -d --dns 146.164.34.2 -e IP_SGBD=$DB_IP -p ${APPS["$app"]}:80 --name $app -v $HOME_DIR/apps/$app:/code idehco3_base ./run.sh )"
 
 	if [ "$id" != "" ]; then
 		ip="$( docker inspect --format '{{ .NetworkSettings.IPAddress }}' $id )"
-		echo " ++ app $app running in $ip:8000 and localhost:${APPS["$app"]}"
+		echo " ++ app $app running in $ip:80 and localhost:${APPS["$app"]}"
 	else
 		echo " -- fail to starting app $app"
 	fi

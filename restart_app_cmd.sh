@@ -20,6 +20,12 @@ else
 	exit
 fi
 
+if [ "$2" != "" ]; then
+	cmd=$2
+else
+	cmd='./run.sh'
+fi
+
 echo " ** checking if exist the container of app $app"
 id="$( docker ps -a -q -f name=$app )"
 if [ "$id" != "" ]; then
@@ -32,11 +38,5 @@ echo " ** getting the ip of database"
 DB_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' database )"
 
 echo " ** starting app $app..."
-id="$( docker run -d --dns 146.164.34.2 -e IP_SGBD=$DB_IP -p ${APPS["$app"]}:80 --name $app -v $HOME_DIR/apps/$app:/code new_idehco3_base ./run2.sh )"
+docker run -it --dns 146.164.34.2 -e IP_SGBD=$DB_IP -p ${APPS["$app"]}:80 --name $app -v $HOME_DIR/apps/$app:/code idehco3_base $cmd
 
-if [ "$id" != "" ]; then
-	ip="$( docker inspect --format '{{ .NetworkSettings.IPAddress }}' $id )"
-	echo " ++ app $app running in $ip:80 and localhost:${APPS["$app"]}"
-else
-	echo " -- fail to starting app $app"
-fi
