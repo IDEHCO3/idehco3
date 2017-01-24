@@ -6,7 +6,8 @@ declare -A APPS=( ["universal_user"]="5000"
 				  ["community"]="5001"
 				  ["mapping"]="5002"
 				  ["bc_edgv"]="5003"
-				  ["markers"]="5004" )
+				  ["markers"]="5004"
+				  ["ServiceManager"]="5005" )
 
 if [ "$1" != "" ]; then
 	app=$1

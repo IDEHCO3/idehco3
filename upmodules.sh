@@ -37,7 +37,8 @@ declare -A APPS=( ["universal_user"]="5000"
 				  ["community"]="5001"
 				  ["mapping"]="5002"
 				  ["bc_edgv"]="5003"
-				  ["markers"]="5004" )
+				  ["markers"]="5004"
+				  ["ServiceManager"]="5005" )
 
 for app in "${!APPS[@]}"
 do
@@ -49,7 +50,7 @@ do
 	fi
 
 	echo " ** starting app $app..."
-	id="$( docker run -d --dns 146.164.34.2 -e IP_SGBD=$DB_IP -p ${APPS["$app"]}:80 --name $app -v $HOME_DIR/apps/$app:/code idehco3_base ./run.sh )"
+	id="$( docker run -d --dns 146.164.34.2 -e IP_SGBD=$DB_IP -p ${APPS["$app"]}:80 --name $app -v $HOME_DIR/apps/$app:/code -v $HOME_DIR/apps/$app/nginx:/var/log/nginx idehco3_base ./run.sh )"
 
 	if [ "$id" != "" ]; then
 		ip="$( docker inspect --format '{{ .NetworkSettings.IPAddress }}' $id )"

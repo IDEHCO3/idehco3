@@ -5,7 +5,8 @@ APPS="universal_user
 	  mapping
 	  bc_edgv
 	  markers
-	  database"
+	  database
+	  ServiceManager"
 
 for app in $APPS
 do
