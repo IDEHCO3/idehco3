@@ -35,9 +35,20 @@ if [ "$id" != "" ]; then
 	docker rm $app
 fi
 
-echo " ** getting the ip of database"
-DB_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' database )"
+DB_IP=$3
+DB_PORT=2345
 
-echo " ** starting app $app..."
-docker run -it --dns 146.164.34.2 -e IP_SGBD=$DB_IP -p ${APPS["$app"]}:80 --name $app -v $HOME_DIR/apps/$app:/code idehco3_base $cmd
+if [ "$DB_IP" == "" ]; then
+	id="$( docker ps -a -q -f name=^/database$ )"
+	if [ "$id" != "" ]; then
+		echo " ** getting the ip of database"
+		DB_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' database )"
+	fi
+fi
 
+if [ "$DB_IP" != "" ]; then
+	echo " ** starting app $app..."
+	docker run -it --dns 146.164.34.2 -e IP_SGBD=$DB_IP -e PORT_SGBD=$DB_PORT -p ${APPS["$app"]}:80 --name $app -v $HOME_DIR/apps/$app:/code idehco3_base $cmd
+else
+	echo " -- no database found."
+fi

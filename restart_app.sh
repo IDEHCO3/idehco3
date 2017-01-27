@@ -29,15 +29,28 @@ if [ "$id" != "" ]; then
 	docker rm $app
 fi
 
-echo " ** getting the ip of database"
-DB_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' database )"
 
-echo " ** starting app $app..."
-id="$( docker run -d --dns 146.164.34.2 -e IP_SGBD=$DB_IP -p ${APPS["$app"]}:80 --name $app -v $HOME_DIR/apps/$app:/code -v $HOME_DIR/apps/$app/nginx:/var/log/nginx idehco3_base ./run.sh )"
+DB_IP=$2
+DB_PORT=2345
 
-if [ "$id" != "" ]; then
-	ip="$( docker inspect --format '{{ .NetworkSettings.IPAddress }}' $id )"
-	echo " ++ app $app running in $ip:80 and localhost:${APPS["$app"]}"
+if [ "$DB_IP" == "" ]; then
+	id="$( docker ps -a -q -f name=^/database$ )"
+	if [ "$id" != "" ]; then
+		echo " ** getting the ip of database"
+		DB_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' database )"
+	fi
+fi
+
+if [ "$DB_IP" != "" ]; then
+	echo " ** starting app $app..."
+	id="$( docker run -d --dns 146.164.34.2 -e IP_SGBD=$DB_IP -e PORT_SGBD=$DB_PORT -p ${APPS["$app"]}:80 --name $app -v $HOME_DIR/apps/$app:/code -v $HOME_DIR/apps/$app/nginx:/var/log/nginx idehco3_base ./run.sh )"
+
+	if [ "$id" != "" ]; then
+		ip="$( docker inspect --format '{{ .NetworkSettings.IPAddress }}' $id )"
+		echo " ++ app $app running in $ip:80 and localhost:${APPS["$app"]}"
+	else
+		echo " -- fail to starting app $app"
+	fi
 else
-	echo " -- fail to starting app $app"
+	echo " -- no database found."
 fi
